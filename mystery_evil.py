@@ -42,7 +42,6 @@ def win_or_lose(computers_word, correct_guesses):
 def count_character_per_index(evil_word_list, guess, word_length):
     while True:
         character_index_count = [0] * word_length
-        print(character_index_count)
         for word in evil_word_list:
             index = 0
             for character in word:
@@ -73,8 +72,24 @@ def update_correct_guess_for_print(correct_guess_for_print, max_index, user_inpu
     return correct_guess_for_print
 
 
+def last_letter_remaining(count_guess_per_index, word_length):
+    count_of_zeros = 0
+    for number in count_guess_per_index:
+        if number == 0:
+            count_of_zeros +=1
+    if count_of_zeros + 1 == word_length:
+        return True
 
-
+def user_input_in_word(evil_word_list, max_index, user_input, evil_word_list_update, correct_guesses, incorrect_guesses):
+    for word in evil_word_list:
+        if user_input in word:
+            correct_guesses.append(user_input)
+            print('That was a correct guess')
+            choose_most_possible_words(evil_word_list, max_index, user_input, evil_word_list_update)
+            return True
+    else:
+        incorrect_guesses.append(user_input)
+        print('That was a wrong guess')
 
 
 
@@ -101,17 +116,28 @@ def main():
 
         max_index = count_guess_per_index.index(max(count_guess_per_index))
 
+        max_index_value = count_guess_per_index[max_index]
+
         print(max_index)
 
+        if last_letter_remaining == True:
+            if max_index_value > 1:
+                incorrect_guesses.append(user_input)
+                print('That was a wrong guess')
+            elif max_index_value == 1:
+                    if user_input == evil_word_list[max_index]:
+                        print('You win!!!!')
+                        break
+                    else:
+                        incorrect_guesses.append(user_input)
+                        print('That was an incorrect guess')
 
-        if count_guess_per_index[max_index] == 0:
-            incorrect_guesses.append(user_input)
-            print('That was an incorrect guess')
+        else:
+                user_input_in_word(evil_word_list, max_index, user_input, evil_word_list_update, correct_guesses, incorrect_guesses)
 
-        elif count_guess_per_index[max_index] > 1:
-            correct_guesses.append(user_input)
-            print('That was a correct guess')
-            choose_most_possible_words(evil_word_list, max_index, user_input, evil_word_list_update)
+        remaining_guesses -= 1
+        print('you have {} guesses remaining'.format(remaining_guesses))
+
 
 
         print(update_correct_guess_for_print(correct_guess_for_print, max_index, user_input))
